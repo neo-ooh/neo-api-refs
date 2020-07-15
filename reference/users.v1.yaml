@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: Users
+  version: '1.0'
+  contact:
+    name: Valentin Dufois
+    email: vdufois@neo-ooh.com
+  description: 'The Users Manager API handles all operations related to the users, their capabilities and more. Information inside this API are central to all Neo services  '
+servers:
+  - url: 'https://api.users.neo-ooh.info'
+    description: prod
+  - url: 'https://dev.api.users.neo-ooh.info'
+    description: dev
+paths:
+  '/users/{user-id}':
+    parameters:
+      - schema:
+          type: string
+        name: user-id
+        in: path
+        required: true
+    get:
+      summary: Give information about the user
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/User.v1.yaml
+      operationId: get-users-user-id
+      parameters: []
+      description: Returns available informations about the users. The user capabilities are not included in this endpoint.
+    put:
+      summary: Updates the user informations
+      tags: []
+      responses: {}
+      operationId: put-users-user-id
+    delete:
+      summary: Remove the user
+      tags: []
+      responses: {}
+      operationId: delete-users-user-id
+  '/users/{user-id}/capabilities':
+    parameters:
+      - schema:
+          type: string
+        name: user-id
+        in: path
+        required: true
+    get:
+      summary: Gives the user's capabilities
+      tags: []
+      responses: {}
+      operationId: get-user-capabilities-user-id
+    post:
+      summary: Add capability to the user
+      tags: []
+      responses: {}
+      operationId: post-user-capabilities-user-id
+    put:
+      summary: Updates the user capabilities
+      tags: []
+      responses: {}
+      operationId: put-user-capabilities-user-id
+    delete:
+      summary: Remove capabilities from the user
+      tags: []
+      responses: {}
+      operationId: delete-user-capabilities-user-id
+  '/activities/{user-id}':
+    parameters:
+      - schema:
+          type: string
+        name: user-id
+        in: path
+        required: true
+    get:
+      summary: List a user's activity history
+      tags: []
+      responses: {}
+      operationId: get-activity-user-id
+    post:
+      summary: Register an activity on the user history
+      tags: []
+      responses: {}
+      operationId: post-activity-user-id
+  /users:
+    get:
+      summary: 'List all users the current user can see '
+      tags:
+        - Users
+      responses: {}
+      operationId: get-users
+    post:
+      summary: Create a new user
+      tags: []
+      responses: {}
+      operationId: post-users
+  /capabilities:
+    get:
+      summary: List all capabilities available
+      tags: []
+      responses: {}
+      operationId: get-capabilities
+  /roles:
+    get:
+      summary: List all roles available
+      tags: []
+      responses: {}
+      operationId: get-roles
+    post:
+      summary: Create a new role
+      tags: []
+      responses: {}
+      operationId: post-roles
+    patch:
+      summary: Update a role
+      tags: []
+      responses: {}
+      operationId: patch-roles
+    delete:
+      summary: Erase a role
+      tags: []
+      responses: {}
+      operationId: delete-roles
+components:
+  schemas: {}
+  securitySchemes:
+    Authentication:
+      type: http
+      scheme: bearer
+      description: ''
+security:
+  - Authentication: []
+tags:
+  - name: Users

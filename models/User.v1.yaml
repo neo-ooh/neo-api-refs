@@ -1,0 +1,28 @@
+title: User
+type: object
+x-tags:
+  - Users
+properties:
+  id:
+    type: number
+    description: ''
+  name:
+    type: string
+    description: |
+      The user email is used exclusively for cosmetic purposes and for internal search. It is not possible to log into Neo services using a user's name.
+  email:
+    type: string
+    format: email
+    description: The user email is used for communication and authentication.
+  is_locked:
+    type: boolean
+    description: A locked account doesn't allow logging in to it.
+  is_group:
+    type: boolean
+    description: 'A user mark as grouped is always locked, and is used to hierarchise users.'
+required:
+  - id
+  - name
+  - email
+  - is_locked
+  - is_group
