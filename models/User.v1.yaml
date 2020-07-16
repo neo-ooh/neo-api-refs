@@ -2,10 +2,21 @@ title: User
 type: object
 x-tags:
   - Users
+description: |-
+  A user is an entity who can own resources. A user may be set as a group, making it an account to which it is not possible to log in, but who can be used to order and hierarchise other users.
+
+  The `user` model is the cornerstone of the entire Neo infrastructure. All services relies on this table to reference elements. 
+
+  This table, just like the entire Users-manager database should not be accessible directly by other APIs. If another service needs to read or edit anything about a user, it should be done through the Users-manager API.
 properties:
   id:
     type: number
     description: ''
+  parent:
+    type:
+      - integer
+      - 'null'
+    description: 'ID of the parent of this user, usually a group'
   name:
     type: string
     description: |
@@ -20,15 +31,13 @@ properties:
   is_group:
     type: boolean
     description: 'A user mark as grouped is always locked, and is used to hierarchise users.'
+  branding:
+    type: integer
+    description: ID of the branding applied to this user
 required:
   - id
+  - parent
   - name
   - email
   - is_locked
   - is_group
-description: |-
-  A user is an entity who can own resources. A user may be set as a group, making it an account to which it is not possible to log in, but who can be used to order and hierarchise other users.
-
-  The `user` model is the cornerstone of the entire Neo infrastructure. All services relies on this table to reference elements. 
-
-  This table, just like the entire Users-manager database should not be accessible directly by other APIs. If another service needs to read or edit anything about a user, it should be done through the Users-manager API.
