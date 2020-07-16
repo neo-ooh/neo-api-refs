@@ -1,0 +1,20 @@
+title: Role
+type: object
+description: A Role is a collection of capabilities easily assignable to a user
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  desc:
+    type: string
+  capabilities:
+    type: array
+    uniqueItems: true
+    items:
+      $ref: ./Capability.v1.yaml
+required:
+  - id
+  - name
+  - desc
+  - capabilities

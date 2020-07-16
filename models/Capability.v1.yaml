@@ -1,0 +1,16 @@
+title: Capability
+type: object
+description: A capability is an authorization for a logged in user to use a functionnality. Capabilities can have a value to store additional limitations or informations.
+properties:
+  id:
+    type: integer
+  slug:
+    type: string
+  value:
+    type:
+      - string
+      - number
+      - boolean
+required:
+  - id
+  - slug
