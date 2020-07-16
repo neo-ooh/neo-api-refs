@@ -26,3 +26,9 @@ required:
   - email
   - is_locked
   - is_group
+description: |-
+  A user is an entity who can own resources. A user may be set as a group, making it an account to which it is not possible to log in, but who can be used to order and hierarchise other users.
+
+  The `user` model is the cornerstone of the entire Neo infrastructure. All services relies on this table to reference elements. 
+
+  This table, just like the entire Users-manager database should not be accessible directly by other APIs. If another service needs to read or edit anything about a user, it should be done through the Users-manager API.
