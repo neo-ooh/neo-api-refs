@@ -102,13 +102,15 @@ paths:
             application/json:
               schema:
                 $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
       operationId: get-users
       parameters: []
       description: Returns available informations about the users. The user capabilities are not included in this endpoint.
       tags:
         - users
     put:
-      summary: Updates the user informations
+      summary: Update the user informations
       tags:
         - users
       responses:
@@ -150,7 +152,7 @@ paths:
         required: true
         description: A user ID
     get:
-      summary: Gives the user's capabilities
+      summary: Get a user's capabilities
       tags:
         - capabilities
         - users
@@ -187,7 +189,7 @@ paths:
           description: 'If set, the capabilities are returned flattened, without any role information'
           allowEmptyValue: true
     put:
-      summary: Updates the user's capabilities
+      summary: Update a user's capabilities
       operationId: update-user-capabilities
       responses:
         '200':
@@ -201,6 +203,8 @@ paths:
                 type: array
                 items:
                   $ref: ../models/Capability.v1.yaml
+        '401':
+          description: Unauthorized
       description: Updates the user capabilities
       requestBody:
         content:
@@ -245,6 +249,10 @@ paths:
                 required:
                   - activities
                   - next
+        '400':
+          description: 'Bad Request: Are you trying to register an activity for another user ?'
+        '401':
+          description: Unauthorized
       operationId: get-user-activity
       description: Gives records from the user activity history. This endpoint support pagination with the `limit` and `offset` query parameters
       parameters:
@@ -264,7 +272,9 @@ paths:
         - activities
     post:
       summary: Register an activity on the user history
-      tags: []
+      tags:
+        - users
+        - activities
       responses:
         '201':
           description: Created
@@ -326,7 +336,7 @@ paths:
         - capabilities
         - roles
     put:
-      summary: Updates the list of roles of a user
+      summary: Update the roles of a user
       tags:
         - users
         - roles
@@ -368,6 +378,8 @@ paths:
                 type: array
                 items:
                   $ref: ../models/Capability.v1.yaml
+        '401':
+          description: Unauthorized
       operationId: get-capabilities
       description: Returns all available capabilities
       parameters:
@@ -379,7 +391,7 @@ paths:
           allowEmptyValue: true
     parameters: []
     put:
-      summary: Update capability's properties
+      summary: Update a capability properties
       operationId: update-capability
       responses:
         '200':
@@ -736,7 +748,7 @@ paths:
         - users
     patch:
       summary: Remove a user from the group
-      operationId: remove-usser
+      operationId: remove-user
       responses:
         '200':
           description: OK
@@ -773,6 +785,119 @@ paths:
       tags:
         - groups
         - users
+  '/roles/{role-id}/users':
+    parameters:
+      - schema:
+          type: string
+        name: role-id
+        in: path
+        required: true
+    get:
+      summary: List all user with the specified role
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '400':
+          description: 'Bad Request: Given Role ID may be erroneous'
+        '401':
+          description: Unauthorized
+      operationId: get-roles-users
+      description: Gives a list of all the users with the specified role
+  /tos:
+    get:
+      summary: Get the TOS filename and URL
+      tags:
+        - legal
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  update:
+                    type: string
+                    format: date
+                  uri:
+                    type: string
+                    format: uri
+                required:
+                  - name
+                  - update
+                  - uri
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  filename:
+                    type: string
+                  update:
+                    type: string
+                    format: date
+                    description: The TOS upload date
+                  url:
+                    type: string
+                    format: uri
+                required:
+                  - filename
+                  - update
+                  - url
+      operationId: get-tos
+      description: 'Gives the Terms of Service filename, and the URL to download them.'
+      security: []
+    post:
+      summary: Update the TOS
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  filename:
+                    type: string
+                  update:
+                    type: string
+                    format: date
+                  uri:
+                    type: string
+                    format: uri
+                required:
+                  - filename
+                  - update
+                  - uri
+        '400':
+          description: 'Bad Request: File is probably not a PDF'
+        '401':
+          description: Unauthorized
+      operationId: post-tos
+      description: 'Replace the current TOS with the given one. Additionally, all users will e requested to accepted the updated TOS on their next login.'
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                tos:
+                  type: string
+                  format: binary
+                  description: The TOS as a PDF
+              required:
+                - tos
+        description: Simply pass the file as a multipart/form-data file input named `tos`.
 components:
   schemas:
     Activity:
@@ -809,5 +934,6 @@ tags:
   - name: activities
   - name: roles
   - name: groups
+  - name: legal
 security:
   - Authentication: []
