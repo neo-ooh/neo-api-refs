@@ -34,6 +34,8 @@ properties:
   branding:
     type: integer
     description: ID of the branding applied to this user
+  parentName:
+    type: string
 required:
   - id
   - parent

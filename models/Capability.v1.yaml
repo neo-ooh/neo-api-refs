@@ -4,22 +4,20 @@ description: A capability is an authorization for a logged in user to use a func
 properties:
   id:
     type: integer
+    description: Unique ID of the capability
   slug:
     type: string
-  value:
-    type:
-      - string
-      - number
-      - boolean
-      - 'null'
-  standalone:
-    type: boolean
+    description: human-readable unique slug of the capability
   default:
     type:
       - string
       - number
       - boolean
       - 'null'
-required:
-  - id
-  - slug
+    description: 'Default value of the role, might be empty'
+  standalone:
+    type: boolean
+    description: A standalone capability can be associated with a user without being part of a role.
+  value:
+    type: string
+    description: The capability value overrides the default value. A capability has a value if it is associated to a user or a role.

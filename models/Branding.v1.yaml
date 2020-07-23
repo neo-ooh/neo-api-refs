@@ -1,0 +1,30 @@
+title: Branding
+type: object
+description: A Branding is a collection of graphical personalisations that can be applied to a user
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  logo:
+    type: object
+    properties:
+      filename:
+        type: string
+      original_name:
+        type: string
+      updated_at:
+        type: string
+      created_at:
+        type: string
+  background:
+    type: object
+    properties:
+      filename:
+        type: string
+      original_name:
+        type: string
+      updated_at:
+        type: string
+      created_at:
+        type: string

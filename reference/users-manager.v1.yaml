@@ -142,7 +142,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: delete-user
-      description: Delete the user. Send a request to registered other APIs to propagate the removal
+      description: Deletes the user. Send a request to registered other APIs to propagate the removal
   '/users/{user-id}/capabilities':
     parameters:
       - schema:
@@ -473,94 +473,14 @@ paths:
                   description: 'Short description '
                 capabilities:
                   type: array
-                  description: All the capabilities included in the role
+                  description: ID of capabilities to include in the role
                   items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        description: Valid ID of a capability to include in the role
-                      value:
-                        type:
-                          - string
-                          - number
-                          - boolean
-                        description: Value for the capability in this role
-                    required:
-                      - id
+                    type: integer
               required:
                 - name
                 - desc
                 - capabilities
         description: Role description and a list of capabilities with values (if applicable) to include
-    put:
-      summary: Update the specified role
-      tags:
-        - roles
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Role.v1.yaml
-        '401':
-          description: Unauthorized
-      operationId: update-role
-      description: 'Update a role, including its name, description and included capabilities with their values (if applicable)'
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: role
-          description: ID of the role to update
-          required: true
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                desc:
-                  type: string
-                capabilities:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                      value:
-                        type:
-                          - string
-                          - number
-                          - boolean
-                    required:
-                      - id
-              required:
-                - name
-                - desc
-                - capabilities
-        description: ''
-    delete:
-      summary: Delete the specified role
-      tags:
-        - roles
-      responses:
-        '200':
-          description: 'OK: Removed'
-        '401':
-          description: Unauthorized
-      operationId: delete-role
-      parameters:
-        - schema:
-            type: integer
-          in: query
-          name: role
-          description: ID of the role to remove
-      description: 'Deletes a role. If it is applied to a user, its capabilities will not be conserved'
   /groups:
     get:
       summary: List all available groups
@@ -697,9 +617,6 @@ paths:
                     - integer
                     - 'null'
                   description: 'ID of the parent group, or null'
-              required:
-                - name
-                - parent
         description: ''
     delete:
       summary: Delete a group
@@ -712,79 +629,6 @@ paths:
           description: Unauthorized
       operationId: delete-group
       description: 'Delete a group. '
-    post:
-      summary: Add a user to the group
-      operationId: group-add-user
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  group:
-                    $ref: ../models/Group.v1.yaml
-                  users:
-                    type: array
-                    items:
-                      $ref: ../models/User.v1.yaml
-        '400':
-          description: 'Bad Request: The user may well probabaly be already be in a group '
-        '401':
-          description: Unauthorized
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user:
-                  type: integer
-                  description: ID of the user to add to the group
-      description: Adds a user to the group. The user cannot already be in a group
-      tags:
-        - groups
-        - users
-    patch:
-      summary: Remove a user from the group
-      operationId: remove-user
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  group:
-                    $ref: ../models/Group.v1.yaml
-                  users:
-                    type: array
-                    items:
-                      $ref: ../models/User.v1.yaml
-                required:
-                  - group
-                  - users
-        '400':
-          description: 'Bad Request: The user was not in the group'
-        '401':
-          description: Unauthorized
-      description: Remove the specified user from the group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                user:
-                  type: integer
-                  description: ID of the user to remove from the group
-              required:
-                - user
-      tags:
-        - groups
-        - users
   '/roles/{role-id}/users':
     parameters:
       - schema:
@@ -793,8 +637,10 @@ paths:
         in: path
         required: true
     get:
-      summary: List all user with the specified role
-      tags: []
+      summary: List users with role
+      tags:
+        - roles
+        - Users
       responses:
         '200':
           description: OK
@@ -810,6 +656,61 @@ paths:
           description: Unauthorized
       operationId: get-roles-users
       description: Gives a list of all the users with the specified role
+    post:
+      summary: Apply role to user
+      operationId: add-role-user
+      responses:
+        '200':
+          description: 'OK: returns the updated list of the users with the role'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      description: Apply the role to the specified user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+              required:
+                - user
+        description: Specify the user to apply the role on.
+      tags:
+        - roles
+        - Users
+    delete:
+      summary: Remove role from a user
+      operationId: remove-user-role
+      responses:
+        '200':
+          description: 'OK: returns the updated list of the users with the role'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+      description: Remove the role from the specified user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+              required:
+                - user
+      tags:
+        - Users
+        - roles
   /tos:
     get:
       summary: Get the TOS filename and URL
@@ -898,6 +799,344 @@ paths:
               required:
                 - tos
         description: Simply pass the file as a multipart/form-data file input named `tos`.
+  '/roles/{role-id}':
+    parameters:
+      - schema:
+          type: string
+        name: role-id
+        in: path
+        required: true
+    get:
+      summary: Get role infos
+      tags:
+        - roles
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Role.v1.yaml
+        '401':
+          description: Unauthorized
+      operationId: get-role
+      description: Get the role infos
+    put:
+      summary: Update role infos
+      operationId: update-role
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Role.v1.yaml
+        '401':
+          description: Unauthorized
+      description: Update the role's name and description.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+        description: ''
+      tags:
+        - roles
+    delete:
+      summary: Delete role
+      operationId: delete-role
+      description: Deletes a role. Users with this role applied will loses associated capabilities
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      tags:
+        - roles
+  '/roles/{role-id}/capabilities':
+    parameters:
+      - schema:
+          type: string
+        name: role-id
+        in: path
+        required: true
+    get:
+      summary: Get role capabilities
+      tags:
+        - roles
+        - capabilities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Capability.v1.yaml
+      operationId: get-roles-capabilities
+      description: List all the capabilities of a role
+    post:
+      summary: Add capability to role
+      operationId: add-role-capability
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Capability.v1.yaml
+      description: Add the specified capability to the role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capability:
+                  type: integer
+      tags:
+        - roles
+        - capabilities
+    put:
+      summary: Update capability value in role
+      operationId: update-role-capability
+      responses:
+        '200':
+          description: 'OK: Returns the updated capability'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Capability.v1.yaml
+      description: Updates the value of a capability of the role.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capability:
+                  type: integer
+                value:
+                  type:
+                    - string
+                    - 'null'
+                    - number
+                    - boolean
+      tags:
+        - roles
+        - capabilities
+    delete:
+      summary: Remove capability from role
+      operationId: delete-role-capabilty
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Capability.v1.yaml
+      description: Remove a capability from the role
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capability:
+                  type: integer
+      tags:
+        - roles
+        - capabilities
+  '/groups/{group-id}/users':
+    parameters:
+      - schema:
+          type: string
+        name: group-id
+        in: path
+        required: true
+    get:
+      summary: List users in group
+      tags:
+        - groups
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      operationId: get-group-users
+      description: List all users in the group
+    post:
+      summary: ''
+      operationId: add-group-users
+      responses:
+        '200':
+          description: 'OK: Gives an updated list of users in the group'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      description: Add a user to the group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+        description: ''
+      tags:
+        - groups
+        - Users
+    delete:
+      summary: ''
+      operationId: remove-group-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      description: Removes a user from the group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+      tags:
+        - groups
+        - Users
+  /brandings:
+    get:
+      summary: New branding
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Branding.v1.yaml
+      operationId: get-brandings
+      description: List all brandings
+    post:
+      summary: ''
+      operationId: post-brandings
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Branding.v1.yaml
+      description: Creates a new branding
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      tags:
+        - branding
+  '/brandings/{branding-id}':
+    parameters:
+      - schema:
+          type: string
+        name: branding-id
+        in: path
+        required: true
+    get:
+      summary: Get branding infos
+      tags:
+        - branding
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Branding.v1.yaml
+      operationId: get-branding
+      description: Give the branding infos
+    put:
+      summary: Update branding
+      operationId: update-branding
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Branding.v1.yaml
+        '401':
+          description: Unauthorized
+      description: 'Updates the branding name, logo, background, etc.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+        description: ''
+      parameters: []
+      tags:
+        - branding
+    delete:
+      summary: Delete Branding
+      operationId: delete-branding
+      description: Deletes the branding and its associated files
+      tags:
+        - branding
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
 components:
   schemas:
     Activity:
@@ -935,5 +1174,7 @@ tags:
   - name: roles
   - name: groups
   - name: legal
+  - name: Users
+  - name: branding
 security:
   - Authentication: []
