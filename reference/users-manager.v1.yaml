@@ -130,8 +130,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../models/User.v1.yaml
-        description: An updated version of a user information with its
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                owner:
+                  type: integer
+                branding:
+                  type: integer
+                active:
+                  type: boolean
+                tos_accepted:
+                  type: boolean
+        description: An updated version of a user information
     delete:
       summary: Remove the user
       tags:
@@ -152,7 +169,7 @@ paths:
         required: true
         description: A user ID
     get:
-      summary: Get a user's capabilities
+      summary: "Get a user's capabilities"
       tags:
         - capabilities
         - users
@@ -189,7 +206,7 @@ paths:
           description: 'If set, the capabilities are returned flattened, without any role information'
           allowEmptyValue: true
     put:
-      summary: Update a user's capabilities
+      summary: "Update a user's capabilities"
       operationId: update-user-capabilities
       responses:
         '200':
@@ -228,7 +245,7 @@ paths:
         in: path
         required: true
     get:
-      summary: List a user's activity history
+      summary: "List a user's activity history"
       responses:
         '200':
           description: OK
@@ -283,7 +300,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: post-user-activity
-      description: Register an activity to the user's history
+      description: "Register an activity to the user's history"
       requestBody:
         content:
           application/json:
@@ -423,7 +440,7 @@ paths:
                 standalone:
                   type: boolean
         description: Include properties of the capability you want to update
-      description: Updates the capability's default value and its standalone property
+      description: "Updates the capability's default value and its standalone property"
       tags:
         - capabilities
   /roles:
@@ -758,7 +775,8 @@ paths:
       security: []
     post:
       summary: Update the TOS
-      tags: []
+      tags:
+        - legal
       responses:
         '200':
           description: OK
@@ -834,7 +852,7 @@ paths:
                 $ref: ../models/Role.v1.yaml
         '401':
           description: Unauthorized
-      description: Update the role's name and description.
+      description: "Update the role's name and description."
       requestBody:
         content:
           application/json:
@@ -1039,7 +1057,8 @@ paths:
   /brandings:
     get:
       summary: New branding
-      tags: []
+      tags:
+        - branding
       responses:
         '200':
           description: OK
@@ -1052,7 +1071,7 @@ paths:
       operationId: get-brandings
       description: List all brandings
     post:
-      summary: ''
+      summary: Create new branding
       operationId: post-brandings
       responses:
         '200':
@@ -1137,6 +1156,65 @@ paths:
           description: OK
         '401':
           description: Unauthorized
+  '/users/{user-id}/locations':
+    parameters:
+      - schema:
+          type: string
+        name: user-id
+        in: path
+        required: true
+    get:
+      summary: "Get user's locations"
+      tags:
+        - user
+        - location
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Location.v1.yaml
+      operationId: get-users-location
+      description: Gives the list of locations associated with this user
+    post:
+      summary: ''
+      operationId: post-user-locations
+      responses:
+        '200':
+          description: OK
+      description: Give the user access to an additional location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                '':
+                  type: integer
+      tags:
+        - user
+        - location
+    delete:
+      summary: ''
+      operationId: delete-user-location
+      responses:
+        '200':
+          description: OK
+      description: Remove user access to a location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: integer
+      tags:
+        - user
+        - location
 components:
   schemas:
     Activity:
@@ -1162,6 +1240,8 @@ components:
         review_id:
           type: string
       description: 'An activity represent an action done by a user and formn an history for each user. Once recorded, an activity cannot be removed'
+      x-tags:
+        - activities
   securitySchemes:
     neo-auth-sso-token:
       type: http

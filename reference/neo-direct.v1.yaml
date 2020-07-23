@@ -11,24 +11,829 @@ servers:
     description: prod
   - url: 'https://dev.api.neo-direct.neo-ooh.info/v1'
     description: dev
-paths: {}
+paths:
+  /campaigns:
+    get:
+      summary: Get all campaigns
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Campaign'
+        '401':
+          description: Unauthorized
+      operationId: get-campaigns
+      description: List all the campaign the current user can access
+    post:
+      summary: Create a new campaign
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          description: Unauthorized
+      operationId: post-campaigns
+      description: Create a new campaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                content_limit:
+                  type: integer
+                display_duration:
+                  type: number
+                format:
+                  type: integer
+                medias:
+                  type: array
+                  items:
+                    type: integer
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+              required:
+                - name
+                - content_limit
+                - display_duration
+                - format
+                - medias
+                - start_date
+                - end_date
+        description: ''
+  '/campaigns/{campaign-id}':
+    parameters:
+      - schema:
+          type: string
+        name: campaign-id
+        in: path
+        required: true
+    get:
+      summary: Get a campaign
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          description: Unauthorized
+      operationId: get-campaign
+      description: Get the campaign informations
+    put:
+      summary: Update campaign
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Campaign'
+        '401':
+          description: Unauthorized
+      operationId: update-campaign
+      description: "Update the campaign's information"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                content_limit:
+                  type: string
+                display_duration:
+                  type: string
+                start_date:
+                  type: string
+                end_date:
+                  type: string
+    delete:
+      summary: Delete a campaign
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: delete-campaign
+      description: 'Delete the campaign and its associated schedules. '
+  '/campaigns/{campaign-id}/locations':
+    parameters:
+      - schema:
+          type: string
+        name: campaign-id
+        in: path
+        required: true
+    get:
+      summary: "List campaign's locations"
+      tags:
+        - campaigns
+        - location
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Location.v1.yaml
+        '401':
+          description: Unauthorized
+      operationId: get-campaign-locations
+      description: List all locations of the campaign
+    post:
+      summary: Add a location to a campaign
+      tags:
+        - campaigns
+        - location
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: post-campaign-location
+      description: Add a location to the campaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: integer
+              required:
+                - location
+        description: ''
+    delete:
+      summary: Remove a location from a campaign
+      tags:
+        - campaigns
+        - location
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: delete-campaign-location
+      description: Remove a location from the campaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: integer
+              required:
+                - location
+  '/campaigns/{campaign-id}/schedules':
+    parameters:
+      - schema:
+          type: string
+        name: campaign-id
+        in: path
+        required: true
+    get:
+      summary: "Get campaign's schedules"
+      tags:
+        - campaigns
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+        '401':
+          description: Unauthorized
+      operationId: get-campaign-schedules
+      description: Gives all the schedules of the campaign
+    post:
+      summary: Create a new schedule for the campaign
+      tags:
+        - campaigns
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '401':
+          description: Unauthorized
+      operationId: post-campaign-schedule
+      description: Create a new schedule for the campaign
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: integer
+              required:
+                - content
+  '/campaigns/{campaign-id}/shares':
+    parameters:
+      - schema:
+          type: string
+        name: campaign-id
+        in: path
+        required: true
+    get:
+      summary: Get a campaign shares
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+        '401':
+          description: Unauthorized
+      operationId: get-campaign-shares
+      description: List all the users and groups with whom this campaign is shared
+    post:
+      summary: Share the campaign
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: post-campaign-share
+      description: Share the campaign with an additional user or group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+              required:
+                - user
+        description: ''
+    delete:
+      summary: Remove a share
+      tags:
+        - campaigns
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: delete-campaign-share
+      description: Stop sharing the campaign with a user or group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+                  description: ID of the user/group with whom to stop sharing.
+              required:
+                - user
+  '/schedules/{schedule-id}':
+    parameters:
+      - schema:
+          type: string
+        name: schedule-id
+        in: path
+        required: true
+    get:
+      summary: Get a Schedule info
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+      operationId: get-schedule
+      description: Give the schedule infos
+    put:
+      summary: Update a Schedule infos
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+      operationId: update-schedule
+      description: Updates the schedule infos
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start-date:
+                  type: string
+                end-date:
+                  type: string
+    delete:
+      summary: Delete a Schedule
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+      operationId: delete-schedule
+      description: Deletes the schedule
+  '/schedules/{schedule-id}/reviews':
+    parameters:
+      - schema:
+          type: string
+        name: schedule-id
+        in: path
+        required: true
+    get:
+      summary: Get a Schedule reviews
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Review'
+      operationId: get-schedule-reviews
+      description: "List all the schedule's reviews"
+    post:
+      summary: Add a review to a Schedule
+      tags:
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Review'
+      operationId: post-schedule-review
+      description: Insert a new review for the schedule
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                approved:
+                  type: boolean
+                comment:
+                  type: string
+              required:
+                - approved
+                - comment
+  /libraries:
+    get:
+      summary: List all libraries
+      tags:
+        - libraries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Library'
+        '401':
+          description: Unauthorized
+      operationId: get-libraries
+      description: List all the available libraries
+    post:
+      summary: Create a new library
+      tags:
+        - libraries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+        '401':
+          description: Unauthorized
+      operationId: post-library
+      description: Create a new library
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                content_limit:
+                  type: integer
+                  minimum: 0
+                  exclusiveMinimum: true
+        description: ''
+  '/libraries/{library-id}':
+    parameters:
+      - schema:
+          type: string
+        name: library-id
+        in: path
+        required: true
+    get:
+      summary: Get a library infos
+      tags:
+        - libraries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+      operationId: get-library
+      description: Give the library infos
+      parameters: []
+    put:
+      summary: Update a library infos
+      tags:
+        - libraries
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+      operationId: update-library
+      description: Updates the library information
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                content_limit:
+                  type: integer
+                  exclusiveMinimum: true
+                  minimum: 0
+    delete:
+      summary: Delete a library
+      tags:
+        - libraries
+      responses:
+        '200':
+          description: OK
+      operationId: delete-library
+      description: 'Deletes the library and all the contents inside of it. If some of the contents are scheduled, these will also be removed.'
+  '/libraries/{library-id}/shares':
+    parameters:
+      - schema:
+          type: string
+        name: library-id
+        in: path
+        required: true
+    get:
+      summary: Get a library shares
+      tags:
+        - libraries
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+      operationId: get-library-shares
+      description: List all users and groups with whom the library is shared
+    post:
+      summary: Share a library
+      tags:
+        - libraries
+        - users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/User.v1.yaml
+      operationId: post-library-share
+      description: Share the library with an additional user/group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+    delete:
+      summary: Stop sharing a library
+      tags:
+        - libraries
+        - users
+      responses:
+        '200':
+          description: OK
+      operationId: delete-library-share
+      description: Stop sharing the library with a user/group.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+  '/libraries/{library-id}/contents':
+    parameters:
+      - schema:
+          type: string
+        name: library-id
+        in: path
+        required: true
+    get:
+      summary: Get a library contents
+      tags:
+        - libraries
+        - contents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Content'
+      operationId: get-library-content
+      description: List all contents in the library
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: format
+          description: filter the returned collection by a specific format
+    post:
+      summary: Create a new content in the library
+      tags:
+        - libraries
+        - contents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+      operationId: post-library-content
+      description: 'Add a new, empty, piece of content in the library.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                format:
+                  type: integer
+                  description: Format ID for the new content
+  '/contents/{content-id}':
+    parameters:
+      - schema:
+          type: string
+        name: content-id
+        in: path
+        required: true
+    get:
+      summary: Get a piece of content
+      tags:
+        - contents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '401':
+          description: Unauthorized
+      operationId: get-content
+      description: Gives information on a piece of content
+    put:
+      summary: Update a content information
+      tags:
+        - contents
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '401':
+          description: Unauthorized
+      operationId: update-content
+      description: Updates the content information
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                scheduling_duration:
+                  type: number
+                scheduling_times:
+                  type: number
+    delete:
+      summary: Delete a piece of content
+      tags:
+        - contents
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: delete-content
+      description: 'Deletes the content. If it is scheduled somewheres, these will also be removed.'
+    post:
+      summary: Add a creative
+      tags:
+        - contents
+        - creatives
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Creative'
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+      operationId: post-content-creative
+      description: Add a creative to the content
+      parameters:
+        - schema:
+            type: integer
+          in: query
+          name: frame
+          description: ID of the frame on which to add the creative
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+  '/contents/{content-id}/schedules':
+    parameters:
+      - schema:
+          type: string
+        name: content-id
+        in: path
+        required: true
+        description: ID of a piece of content
+    get:
+      summary: "List a content's schedules"
+      tags:
+        - contents
+        - schedules
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+        '401':
+          description: Unauthorized
+      operationId: get-content-schedules
+      description: List all schedules of the content
+    post:
+      summary: Schedule the content
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '401':
+          description: Unauthorized
+      operationId: post-content-schedule
+      description: "Schedule the content in a campaign. \nThe content is scheduled with default dates which are usually the current date and the end of the campaign but a specific scheduling duration of the content will override this if applicable."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                campaign:
+                  type: integer
+                  description: ID of the campaign in which to schedule the piece of content
+              required:
+                - campaign
+  '/creatives/{creative-id}':
+    parameters:
+      - schema:
+          type: string
+        name: creative-id
+        in: path
+        required: true
+    delete:
+      summary: Delete a creative
+      tags:
+        - creatives
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+      operationId: delete-creative
+      description: Deletes the creative
 components:
   schemas:
     Library:
       title: Library
       type: object
+      description: Represent a collection of contents stored together for easy access
       properties:
         id:
           type: integer
+          description: Unique ID of the library
         name:
           type: string
+          description: Name of the library
         owner:
           type: integer
+          description: ID of the Group/User owning this library
         content-limit:
           type: integer
+          description: 'Maximum number of piece of content this library can hold, regardless of formats'
         usage:
           type: integer
-      description: Represent a collection of contents stored together for easy access
+          description: 'How many pieces of content are present in the library, regardless of format'
     Content:
       title: Content
       type: object
@@ -36,22 +841,32 @@ components:
       properties:
         id:
           type: integer
+          description: Unique ID of the piece of content
         name:
           type: string
+          description: 'Name of the piece of content, optional'
+          default: Content
         owner:
-          type: string
+          type: integer
+          description: ID of the User owning the piece of content
         library:
-          type: string
+          type: integer
+          description: ID of the library this piece of content belongs to.
         format:
-          type: string
+          type: integer
+          description: ID of the Format of the content
         media_type:
-          type: string
+          type: integer
+          description: ID of the media-type of the content
         scheduling_duration:
-          type: string
+          type: number
+          description: How long can the content but scheduled at max
         scheduling_times:
-          type: string
+          type: integer
+          description: How many times can the content be scheduled before expiring
         creatives:
           type: array
+          description: Creatives in the piece of content
           items:
             $ref: '#/components/schemas/Creative'
     Creative:
@@ -61,18 +876,26 @@ components:
       properties:
         id:
           type: integer
+          description: Unique ID of the creative
         owner:
           type: integer
+          description: ID of the User who uploaded this creative
         content:
           type: integer
+          description: Content ID to which this creative belongs
         frame:
           type: integer
+          description: ID of the Frame this creative fits in
         extension:
           type: string
+          description: file extension of the creative file
+          example: jpg
         checksum:
           type: string
+          description: 'Unique UUID for this creative, used for duplicate checking'
         reupload:
           type: boolean
+          description: Tell if this creative file has already been scheduled in the past
     Schedule:
       title: Schedule
       type: object
@@ -80,20 +903,32 @@ components:
       properties:
         id:
           type: integer
+          description: Unique ID of the schedule
         campaign:
           type: integer
+          description: ID of the campaign in which the schedule is
         content:
-          type: integer
+          $ref: '#/components/schemas/Content'
         user:
           type: integer
+          description: ID of the user who created the schedule
         start_date:
           type: string
+          description: "Start broadcast date of the schedule. Cannot be before the owning campaign's start date "
+          format: date-time
         end_date:
           type: string
-        print_count:
-          type: integer
+          description: "End broadcast date of the schedule. Cannot be after the owning campaign's end date "
+          format: date-time
         status:
           type: string
+          description: Current status of the schedule
+          enum:
+            - DRAFT
+            - PENDING
+            - APPROVED
+            - REJECTED
+            - EXPIRED
     Review:
       title: Review
       type: object
@@ -103,27 +938,92 @@ components:
       properties:
         id:
           type: integer
+          description: Unique ID of the review
         schedule:
           type: integer
+          description: ID of the schedule referenced by the review
         reviewer:
           type: integer
+          description: 'ID of the user who sent this review. In case of auto-approved reviews, this will be the ID of the user who comfirmed the schedule.'
         approved:
           type: boolean
+          description: Tell if the review approves or rejects the schedules.
         message:
           type: string
+          description: 'Additional, optional message attached to the review'
         created_at:
           type: string
+          description: Date and time of the review
     Campaign:
       title: Campaign
       type: object
+      description: A campaign represent a collection of scheduled contents on a specific format targeted at specified locations
       properties:
         id:
+          type: integer
+          description: Unique ID of the campaign
+        name:
           type: string
-      description: A campaign represent a collection of scheduled contents on a specific format targeted at specified locations
+          description: 'Name of the campaign, used in search'
+        owner:
+          type: integer
+          description: ID of the User/Group owning the campaign
+        format:
+          type: integer
+          description: ID of the format this campaign is targeting
+        display_duration:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+          description: In seconds. used for scheduling static content the appropriate amount of time and for limiting dynamic content length.
+        content_limit:
+          type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          description: Maximum number of pieces of content allowed simultaneously in the campaign
+        start_date:
+          type: string
+          format: date-time
+          description: ''
+        end_date:
+          type: string
+          format: date-time
+        usage:
+          type: integer
+          description: 'How many number of piece of content actually scheduled in the campaign '
+        medias:
+          type: array
+          description: List of accepted media with mime/types
+          items:
+            $ref: '#/components/schemas/Media-type'
+    Media-type:
+      title: Media-type
+      type: object
+      description: A media type is a collection of mime/types. They are used to restrict the type of contents allowed in a campaign.
+      properties:
+        id:
+          type: integer
+          description: Unique ID of this media type
+        name:
+          type: string
+          description: Name of the media type
+        mime-types:
+          type: array
+          description: List of mime/types for this media type
+          items:
+            type: string
   securitySchemes:
     neo-auth-sso-token:
       type: http
       scheme: bearer
       description: API Token given by the Neo Auth API
+tags:
+  - name: campaigns
+  - name: location
+  - name: schedules
+  - name: libraries
+  - name: contents
+  - name: users
+  - name: creatives
 security:
   - neo-auth-sso-token: []
