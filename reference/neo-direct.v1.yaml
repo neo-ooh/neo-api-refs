@@ -44,7 +44,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: post-campaigns
-      description: Create a new campaign.
+      description: Create a new campaign
       requestBody:
         content:
           application/json:
@@ -97,7 +97,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: get-campaign
-      description: "Get the campaign's informations."
+      description: "Get the campaign's informations.
     put:
       summary: Update campaign
       tags:
@@ -295,7 +295,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: post-campaign-share
-      description: Share the campaign with an additional user or group.
+      description: Share the campaign with an additional user or group
       requestBody:
         content:
           application/json:
@@ -670,7 +670,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: get-content
-      description: Gives information on a piece of content.
+      description: Gives information on a piece of content
     put:
       summary: Update a content information
       tags:
