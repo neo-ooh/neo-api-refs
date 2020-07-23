@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: neo-direct
+  version: '1.0'
+  contact:
+    name: Valentin Dufois
+    email: vdufois@neo-ooh.com
+  description: The Neo Direct API provides access for reading and updating content on Neo-ooh advertising network.
+servers:
+  - url: 'https://api.neo-direct.neo-ooh.info/v1'
+    description: prod
+  - url: 'https://dev.api.neo-direct.neo-ooh.info/v1'
+    description: dev
+paths: {}
+components:
+  schemas:
+    Library:
+      title: Library
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        owner:
+          type: integer
+        content-limit:
+          type: integer
+        usage:
+          type: integer
+      description: Represent a collection of contents stored together for easy access
+    Content:
+      title: Content
+      type: object
+      description: A piece of content is a collection of one or more creatives associated with a specific format
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        owner:
+          type: string
+        library:
+          type: string
+        format:
+          type: string
+        media_type:
+          type: string
+        scheduling_duration:
+          type: string
+        scheduling_times:
+          type: string
+        creatives:
+          type: array
+          items:
+            $ref: '#/components/schemas/Creative'
+    Creative:
+      title: Creative
+      type: object
+      description: A creative is a unique image or video. A creative only exists inside a piece of content.
+      properties:
+        id:
+          type: integer
+        owner:
+          type: integer
+        content:
+          type: integer
+        frame:
+          type: integer
+        extension:
+          type: string
+        checksum:
+          type: string
+        reupload:
+          type: boolean
+    Schedule:
+      title: Schedule
+      type: object
+      description: 'A schedule is the link between a piece of content and a campaign. A schedule holds broadcasting informations such as start and end dates, and it is governed by its reviewing status'
+      properties:
+        id:
+          type: integer
+        campaign:
+          type: integer
+        content:
+          type: integer
+        user:
+          type: integer
+        start_date:
+          type: string
+        end_date:
+          type: string
+        print_count:
+          type: integer
+        status:
+          type: string
+    Review:
+      title: Review
+      type: object
+      description: |-
+        A review tels if a schedule is approved or not. A schedule can have multiple reviews, in this case, the most recent one is the one taking precedence.
+        If a piece of content is scheduled by a user with the `auto-approve` capability, a review is automatically created to approve the schedules.
+      properties:
+        id:
+          type: integer
+        schedule:
+          type: integer
+        reviewer:
+          type: integer
+        approved:
+          type: boolean
+        message:
+          type: string
+        created_at:
+          type: string
+    Campaign:
+      title: Campaign
+      type: object
+      properties:
+        id:
+          type: string
+      description: A campaign represent a collection of scheduled contents on a specific format targeted at specified locations
+  securitySchemes:
+    neo-auth-sso-token:
+      type: http
+      scheme: bearer
+      description: API Token given by the Neo Auth API
+security:
+  - neo-auth-sso-token: []

@@ -7,9 +7,9 @@ info:
     email: vdufois@neo-ooh.com
   description: 'The Users Manager API handles all operations related to the users, their capabilities and more. Information inside this API are central to all Neo services  '
 servers:
-  - url: 'https://api.users.neo-ooh.info'
+  - url: 'https://api.users.neo-ooh.info/v1'
     description: prod
-  - url: 'https://dev.api.users.neo-ooh.info'
+  - url: 'https://dev.api.users.neo-ooh.info/v1'
     description: dev
 paths:
   /users:
@@ -1163,7 +1163,7 @@ components:
           type: string
       description: 'An activity represent an action done by a user and formn an history for each user. Once recorded, an activity cannot be removed'
   securitySchemes:
-    Authentication:
+    neo-auth-sso-token:
       type: http
       scheme: bearer
       description: API Token given by the Neo Auth API
@@ -1177,4 +1177,4 @@ tags:
   - name: Users
   - name: branding
 security:
-  - Authentication: []
+  - neo-auth-sso-token: []
