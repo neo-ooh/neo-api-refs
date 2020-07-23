@@ -1,0 +1,43 @@
+title: Campaign
+type: object
+description: A campaign represent a collection of scheduled contents on a specific format targeted at specified locations
+properties:
+  id:
+    type: integer
+    description: Unique ID of the campaign
+  name:
+    type: string
+    description: 'Name of the campaign, used in search'
+  owner:
+    type: integer
+    description: ID of the User/Group owning the campaign
+  format:
+    type: integer
+    description: ID of the format this campaign is targeting
+  display_duration:
+    type: number
+    minimum: 0
+    exclusiveMinimum: true
+    description: In seconds. used for scheduling static content the appropriate amount of time and for limiting dynamic content length.
+  content_limit:
+    type: integer
+    minimum: 0
+    exclusiveMinimum: true
+    description: Maximum number of pieces of content allowed simultaneously in the campaign
+  start_date:
+    type: string
+    format: date-time
+    description: ''
+  end_date:
+    type: string
+    format: date-time
+  usage:
+    type: integer
+    description: 'How many number of piece of content actually scheduled in the campaign '
+  medias:
+    type: array
+    description: List of accepted media with mime/types
+    items:
+      $ref: ./Media-Type.v1.yaml
+x-tags:
+  - campaigns

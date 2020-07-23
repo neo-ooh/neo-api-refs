@@ -25,7 +25,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Campaign'
+                  $ref: ../models/Campaign.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-campaigns
@@ -40,11 +40,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Campaign'
+                $ref: ../models/Campaign.v1.yaml
         '401':
           description: Unauthorized
       operationId: post-campaigns
-      description: Create a new campaign
+      description: Create a new campaign.
       requestBody:
         content:
           application/json:
@@ -93,11 +93,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Campaign'
+                $ref: ../models/Campaign.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-campaign
-      description: "Get the campaign's informations.
+      description: "Get the campaign's informations."
     put:
       summary: Update campaign
       tags:
@@ -108,7 +108,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Campaign'
+                $ref: ../models/Campaign.v1.yaml
         '401':
           description: Unauthorized
       operationId: update-campaign
@@ -159,6 +159,7 @@ paths:
             application/json:
               schema:
                 type: array
+                description: List of locations
                 items:
                   $ref: ../models/Location.v1.yaml
         '401':
@@ -230,7 +231,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Schedule'
+                  $ref: ../models/Schedule.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-campaign-schedules
@@ -246,7 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: ../models/Schedule.v1.yaml
         '401':
           description: Unauthorized
       operationId: post-campaign-schedule
@@ -295,7 +296,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: post-campaign-share
-      description: Share the campaign with an additional user or group
+      description: Share the campaign with an additional user or group.
       requestBody:
         content:
           application/json:
@@ -346,7 +347,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: ../models/Schedule.v1.yaml
       operationId: get-schedule
       description: Gives the schedule infos.
     put:
@@ -359,7 +360,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: ../models/Schedule.v1.yaml
       operationId: update-schedule
       description: Updates the schedule infos.
       requestBody:
@@ -392,6 +393,7 @@ paths:
       summary: Get a Schedule reviews
       tags:
         - schedules
+        - reviews
       responses:
         '200':
           description: OK
@@ -400,7 +402,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Review'
+                  $ref: ../models/Review.v1.yaml
       operationId: get-schedule-reviews
       description: "Lists all the schedule's reviews."
     post:
@@ -413,7 +415,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Review'
+                $ref: ../models/Review.v1.yaml
       operationId: post-schedule-review
       description: Inserts a new review for the schedule.
       requestBody:
@@ -444,7 +446,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Library'
+                  $ref: ../models/Library.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-libraries
@@ -459,7 +461,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Library'
+                $ref: ../models/Library.v1.yaml
         '401':
           description: Unauthorized
       operationId: post-library
@@ -494,7 +496,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Library'
+                $ref: ../models/Library.v1.yaml
       operationId: get-library
       description: Gives the library infos.
       parameters: []
@@ -508,7 +510,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Library'
+                $ref: ../models/Library.v1.yaml
       operationId: update-library
       description: Updates the library information.
       requestBody:
@@ -617,7 +619,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Content'
+                  $ref: ../models/Content.v1.yaml
       operationId: get-library-content
       description: Lists all contents in the library.
       parameters:
@@ -637,7 +639,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Content'
+                $ref: ../models/Content.v1.yaml
       operationId: post-library-content
       description: 'Adds a new, empty, piece of content in the library.'
       requestBody:
@@ -666,11 +668,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Content'
+                $ref: ../models/Content.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-content
-      description: Gives information on a piece of content
+      description: Gives information on a piece of content.
     put:
       summary: Update a content information
       tags:
@@ -681,7 +683,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Content'
+                $ref: ../models/Content.v1.yaml
         '401':
           description: Unauthorized
       operationId: update-content
@@ -720,7 +722,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Creative'
+                $ref: ../models/Creative.v1.yaml
         '201':
           description: Created
         '401':
@@ -766,21 +768,24 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Schedule'
+                  $ref: ../models/Schedule.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-content-schedules
       description: List all schedules of the content
     post:
-      summary: Schedule the content
-      tags: []
+      summary: Schedule a piece of content
+      tags:
+        - schedules
+        - contents
+        - campaigns
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Schedule'
+                $ref: ../models/Schedule.v1.yaml
         '401':
           description: Unauthorized
       operationId: post-content-schedule
@@ -815,205 +820,6 @@ paths:
       operationId: delete-creative
       description: Deletes the creative.
 components:
-  schemas:
-    Library:
-      title: Library
-      type: object
-      description: Represent a collection of contents stored together for easy access
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the library
-        name:
-          type: string
-          description: Name of the library
-        owner:
-          type: integer
-          description: ID of the Group/User owning this library
-        content-limit:
-          type: integer
-          description: 'Maximum number of piece of content this library can hold, regardless of formats'
-        usage:
-          type: integer
-          description: 'How many pieces of content are present in the library, regardless of format'
-    Content:
-      title: Content
-      type: object
-      description: A piece of content is a collection of one or more creatives associated with a specific format
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the piece of content
-        name:
-          type: string
-          description: 'Name of the piece of content, optional'
-          default: Content
-        owner:
-          type: integer
-          description: ID of the User owning the piece of content
-        library:
-          type: integer
-          description: ID of the library this piece of content belongs to.
-        format:
-          type: integer
-          description: ID of the Format of the content
-        media_type:
-          type: integer
-          description: ID of the media-type of the content
-        scheduling_duration:
-          type: number
-          description: How long can the content but scheduled at max
-        scheduling_times:
-          type: integer
-          description: How many times can the content be scheduled before expiring
-        creatives:
-          type: array
-          description: Creatives in the piece of content
-          items:
-            $ref: '#/components/schemas/Creative'
-    Creative:
-      title: Creative
-      type: object
-      description: A creative is a unique image or video. A creative only exists inside a piece of content.
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the creative
-        owner:
-          type: integer
-          description: ID of the User who uploaded this creative
-        content:
-          type: integer
-          description: Content ID to which this creative belongs
-        frame:
-          type: integer
-          description: ID of the Frame this creative fits in
-        extension:
-          type: string
-          description: file extension of the creative file
-          example: jpg
-        checksum:
-          type: string
-          description: 'Unique UUID for this creative, used for duplicate checking'
-        reupload:
-          type: boolean
-          description: Tell if this creative file has already been scheduled in the past
-    Schedule:
-      title: Schedule
-      type: object
-      description: 'A schedule is the link between a piece of content and a campaign. A schedule holds broadcasting informations such as start and end dates, and it is governed by its reviewing status'
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the schedule
-        campaign:
-          type: integer
-          description: ID of the campaign in which the schedule is
-        content:
-          $ref: '#/components/schemas/Content'
-        user:
-          type: integer
-          description: ID of the user who created the schedule
-        start_date:
-          type: string
-          description: "Start broadcast date of the schedule. Cannot be before the owning campaign's start date "
-          format: date-time
-        end_date:
-          type: string
-          description: "End broadcast date of the schedule. Cannot be after the owning campaign's end date "
-          format: date-time
-        status:
-          type: string
-          description: Current status of the schedule
-          enum:
-            - DRAFT
-            - PENDING
-            - APPROVED
-            - REJECTED
-            - EXPIRED
-    Review:
-      title: Review
-      type: object
-      description: |-
-        A review tels if a schedule is approved or not. A schedule can have multiple reviews, in this case, the most recent one is the one taking precedence.
-        If a piece of content is scheduled by a user with the `auto-approve` capability, a review is automatically created to approve the schedules.
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the review
-        schedule:
-          type: integer
-          description: ID of the schedule referenced by the review
-        reviewer:
-          type: integer
-          description: 'ID of the user who sent this review. In case of auto-approved reviews, this will be the ID of the user who comfirmed the schedule.'
-        approved:
-          type: boolean
-          description: Tell if the review approves or rejects the schedules.
-        message:
-          type: string
-          description: 'Additional, optional message attached to the review'
-        created_at:
-          type: string
-          description: Date and time of the review
-    Campaign:
-      title: Campaign
-      type: object
-      description: A campaign represent a collection of scheduled contents on a specific format targeted at specified locations
-      properties:
-        id:
-          type: integer
-          description: Unique ID of the campaign
-        name:
-          type: string
-          description: 'Name of the campaign, used in search'
-        owner:
-          type: integer
-          description: ID of the User/Group owning the campaign
-        format:
-          type: integer
-          description: ID of the format this campaign is targeting
-        display_duration:
-          type: number
-          minimum: 0
-          exclusiveMinimum: true
-          description: In seconds. used for scheduling static content the appropriate amount of time and for limiting dynamic content length.
-        content_limit:
-          type: integer
-          minimum: 0
-          exclusiveMinimum: true
-          description: Maximum number of pieces of content allowed simultaneously in the campaign
-        start_date:
-          type: string
-          format: date-time
-          description: ''
-        end_date:
-          type: string
-          format: date-time
-        usage:
-          type: integer
-          description: 'How many number of piece of content actually scheduled in the campaign '
-        medias:
-          type: array
-          description: List of accepted media with mime/types
-          items:
-            $ref: '#/components/schemas/Media-type'
-    Media-type:
-      title: Media-type
-      type: object
-      description: A media type is a collection of mime/types. They are used to restrict the type of contents allowed in a campaign.
-      properties:
-        id:
-          type: integer
-          description: Unique ID of this media type
-        name:
-          type: string
-          description: Name of the media type
-        mime-types:
-          type: array
-          description: List of mime/types for this media type
-          items:
-            type: string
   securitySchemes:
     neo-auth-sso-token:
       type: http
@@ -1027,5 +833,6 @@ tags:
   - name: contents
   - name: users
   - name: creatives
+  - name: reviews
 security:
   - neo-auth-sso-token: []

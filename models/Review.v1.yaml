@@ -1,0 +1,26 @@
+title: Review
+type: object
+description: |-
+  A review tels if a schedule is approved or not. A schedule can have multiple reviews, in this case, the most recent one is the one taking precedence.
+  If a piece of content is scheduled by a user with the `auto-approve` capability, a review is automatically created to approve the schedules.
+properties:
+  id:
+    type: integer
+    description: Unique ID of the review
+  schedule:
+    type: integer
+    description: ID of the schedule referenced by the review
+  reviewer:
+    type: integer
+    description: 'ID of the user who sent this review. In case of auto-approved reviews, this will be the ID of the user who comfirmed the schedule.'
+  approved:
+    type: boolean
+    description: Tell if the review approves or rejects the schedules.
+  message:
+    type: string
+    description: 'Additional, optional message attached to the review'
+  created_at:
+    type: string
+    description: Date and time of the review
+x-tags:
+  - reviews

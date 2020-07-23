@@ -1,0 +1,34 @@
+title: Schedule
+type: object
+description: 'A schedule is the link between a piece of content and a campaign. A schedule holds broadcasting informations such as start and end dates, and it is governed by its reviewing status'
+properties:
+  id:
+    type: integer
+    description: Unique ID of the schedule
+  campaign:
+    type: integer
+    description: ID of the campaign in which the schedule is
+  content:
+    $ref: ./Content.v1.yaml
+  user:
+    type: integer
+    description: ID of the user who created the schedule
+  start_date:
+    type: string
+    description: "Start broadcast date of the schedule. Cannot be before the owning campaign's start date "
+    format: date-time
+  end_date:
+    type: string
+    description: "End broadcast date of the schedule. Cannot be after the owning campaign's end date "
+    format: date-time
+  status:
+    type: string
+    description: Current status of the schedule
+    enum:
+      - DRAFT
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - EXPIRED
+x-tags:
+  - schedules

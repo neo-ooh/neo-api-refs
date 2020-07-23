@@ -1,0 +1,18 @@
+title: Location
+type: object
+description: A location is a collection of physical players available for scheduling a campaign. A location can encapsulate one or more formats.
+properties:
+  id:
+    type: integer
+    description: Unique ID of this location
+  network:
+    type: string
+    description: The network to which this location belongs
+  name:
+    type: string
+    description: The name of the location
+  formats:
+    type: array
+    description: ID of the different formats available at this location
+    items:
+      type: integer

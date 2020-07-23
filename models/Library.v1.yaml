@@ -1,0 +1,21 @@
+title: Library
+type: object
+description: Represent a collection of contents stored together for easy access
+properties:
+  id:
+    type: integer
+    description: Unique ID of the library
+  name:
+    type: string
+    description: Name of the library
+  owner:
+    type: integer
+    description: ID of the Group/User owning this library
+  content-limit:
+    type: integer
+    description: 'Maximum number of piece of content this library can hold, regardless of formats'
+  usage:
+    type: integer
+    description: 'How many pieces of content are present in the library, regardless of format'
+x-tags:
+  - libraries

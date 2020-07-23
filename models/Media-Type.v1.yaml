@@ -1,0 +1,17 @@
+title: Media-type
+type: object
+description: A media type is a collection of mime/types. They are used to restrict the type of contents allowed in a campaign.
+properties:
+  id:
+    type: integer
+    description: Unique ID of this media type
+  name:
+    type: string
+    description: Name of the media type
+  mime-types:
+    type: array
+    description: List of mime/types for this media type
+    items:
+      type: string
+x-tags:
+  - media-types

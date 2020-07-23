@@ -1,0 +1,36 @@
+title: Content
+type: object
+description: A piece of content is a collection of one or more creatives associated with a specific format
+properties:
+  id:
+    type: integer
+    description: Unique ID of the piece of content
+  name:
+    type: string
+    description: 'Name of the piece of content, optional'
+    default: Content
+  owner:
+    type: integer
+    description: ID of the User owning the piece of content
+  library:
+    type: integer
+    description: ID of the library this piece of content belongs to.
+  format:
+    type: integer
+    description: ID of the Format of the content
+  media_type:
+    type: integer
+    description: ID of the media-type of the content
+  scheduling_duration:
+    type: number
+    description: How long can the content but scheduled at max
+  scheduling_times:
+    type: integer
+    description: How many times can the content be scheduled before expiring
+  creatives:
+    type: array
+    description: Creatives in the piece of content
+    items:
+      $ref: ./Creative.v1.yaml
+x-tags:
+  - contents

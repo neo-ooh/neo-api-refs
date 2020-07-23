@@ -1,0 +1,28 @@
+title: Creative
+type: object
+description: A creative is a unique image or video. A creative only exists inside a piece of content.
+properties:
+  id:
+    type: integer
+    description: Unique ID of the creative
+  owner:
+    type: integer
+    description: ID of the User who uploaded this creative
+  content:
+    type: integer
+    description: Content ID to which this creative belongs
+  frame:
+    type: integer
+    description: ID of the Frame this creative fits in
+  extension:
+    type: string
+    description: file extension of the creative file
+    example: jpg
+  checksum:
+    type: string
+    description: 'Unique UUID for this creative, used for duplicate checking'
+  reupload:
+    type: boolean
+    description: Tell if this creative file has already been scheduled in the past
+x-tags:
+  - creatives
