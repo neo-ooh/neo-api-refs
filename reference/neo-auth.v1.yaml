@@ -1,0 +1,112 @@
+openapi: 3.0.0
+info:
+  title: neo-auth
+  version: '1.0'
+servers:
+  - url: 'http://neo-auth.app/v1'
+    description: local
+paths:
+  /login:
+    post:
+      summary: ''
+      operationId: login
+      responses:
+        '200':
+          description: 'OK: Login successful. User still need to pass the second factor auth to get access to services.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '403':
+          description: 'Forbidden: Provided credentials are erroneous'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                Bad Email: {}
+        '422':
+          description: 'Unprocessable Entity: The request does not match the prerequists'
+      description: Logins the user using its credentials (email and password).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+  /register:
+    post:
+      summary: ''
+      operationId: post-register
+      responses:
+        '200':
+          description: OK
+      description: 'Register the creation of a user, generate a signup token, and send an email to the user with a link to create its password.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+  /two-fa-validation:
+    post:
+      summary: ''
+      operationId: post-two-fa-validation
+      responses:
+        '200':
+          description: OK
+  /recovery/check-token:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-recoovery-check-token
+    parameters: []
+  /recovery/lost-password:
+    post:
+      summary: ''
+      operationId: post-recovery-lost-password
+      responses:
+        '200':
+          description: OK
+  /recovery/reset-password:
+    post:
+      summary: ''
+      operationId: post-recovery-reset-password
+      responses:
+        '200':
+          description: OK
+  /welcome:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-password
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-welcome
+      responses:
+        '200':
+          description: OK
+components:
+  schemas: {}
