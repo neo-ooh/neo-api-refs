@@ -4,17 +4,36 @@ description: A Role is a collection of capabilities easily assignable to a user
 properties:
   id:
     type: integer
+    description: Unique ID of the Role
   name:
     type: string
+    description: Name of the role
   desc:
     type: string
+    description: Description of the role. Only users with the ability to edit roles and assign them see this.
   capabilities:
     type: array
     uniqueItems: true
+    description: Capabilities this role. encapsulate
     items:
       $ref: ./Capability.v1.yaml
+  users:
+    type: array
+    uniqueItems: true
+    description: List of Users who have this role
+    items:
+      $ref: ./User.v1.yaml
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
 required:
   - id
   - name
   - desc
   - capabilities
+  - users
+  - created_at
+  - updated_at

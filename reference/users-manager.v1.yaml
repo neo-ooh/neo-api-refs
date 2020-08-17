@@ -175,35 +175,30 @@ paths:
         - users
       responses:
         '200':
-          description: |-
-            OK
-
-            if flattened, no roles will be returneed, and all user capabilities through roles will be put in the capabilities array
+          description: OK
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  roles:
-                    type: array
-                    uniqueItems: true
-                    items:
-                      $ref: ../models/Role.v1.yaml
                   capabilities:
                     type: array
                     items:
                       $ref: ../models/Capability.v1.yaml
         '401':
           description: Unauthorized
+        '403':
+          description: 'Forbidden: You don''t have access to this user or your are missing the proper capability '
       operationId: get-user-capabilities
       description: Gives the list of all the capabilities of a user
       parameters:
         - schema:
             type: boolean
-            default: 'true'
           in: query
-          name: flat
-          description: 'If set, the capabilities are returned flattened, without any role information'
+          name: all
+          description: |-
+            Returns all capabilities applied to the user, including ones applied through roles.
+            The value of this param is ignored, only its presence if checked
           allowEmptyValue: true
     post:
       summary: Add a capability to the user
@@ -394,6 +389,17 @@ paths:
               items:
                 type: integer
         description: 'List of roles ID for the user. If a role of the user is missing from the body, it will be removed from the user'
+    delete:
+      summary: Delete a role
+      operationId: delete-users-user-id-roles
+      responses:
+        '200':
+          description: 'OK: Role removed'
+        '401':
+          description: 'Unauthorized: You are not logged in'
+        '403':
+          description: 'Forbidden: You don''t have access to this group or you are missing the proper capability'
+      description: Delete a role. All users with this role applied will loose the capabilities associated with it
   /capabilities:
     get:
       summary: List all available capabilities
@@ -784,7 +790,7 @@ paths:
                   - update
                   - url
       operationId: get-tos
-      description: 'Gives the Terms of Service filename, and the URL to download them.'
+      description: Gives the Terms of Service file URL.
       security: []
     post:
       summary: Update the TOS
@@ -877,17 +883,6 @@ paths:
                 description:
                   type: string
         description: ''
-      tags:
-        - roles
-    delete:
-      summary: Delete role
-      operationId: delete-role
-      description: Deletes a role. Users with this role applied will loses associated capabilities
-      responses:
-        '200':
-          description: OK
-        '401':
-          description: Unauthorized
       tags:
         - roles
   '/roles/{role-id}/capabilities':
