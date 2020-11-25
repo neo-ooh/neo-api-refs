@@ -1,0 +1,15 @@
+title: Error Response
+type: object
+description: "For coherence and uniformity accross all neo APIs, the same type of reponse is used for all errors. Some service may extend this format, but the fields specified here will always be present.\n\nErrors are standardized to allow the user interface to be able to adjust their behaviour when they are encountered. Error should not be shown directly to the users, but rather adapted to the interface. If an error is not the result of a user error, the user should be told so and a solution/alternative should be offered. "
+properties:
+  code:
+    type: string
+    example: 'auth.bad-password, auth.bad-2fa-token'
+    pattern: '^(?<section>[a-z0-9-]+).(?<descriptor>[a-z0-9-]+)'
+    description: A standardized-format string identifiying the type of error encountered
+  message:
+    type: string
+    description: "A human-readable description of the encountered error. This message is meant for debugging purpose and shouldn't be shown to users. "
+required:
+  - code
+  - message

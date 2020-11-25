@@ -1,0 +1,254 @@
+openapi: 3.0.0
+info:
+  title: neo-auth
+  version: '1.0'
+  contact:
+    name: Valentin Dufois
+    email: vdufois@neo-ooh.com
+  license:
+    name: Closed-source
+servers:
+  - url: 'http://neo-auth.app/v1'
+    description: local
+paths:
+  /login:
+    post:
+      summary: ''
+      operationId: login
+      responses:
+        '200':
+          description: 'OK: Login successful. User still need to pass the second factor auth to get access to services.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '403':
+          description: 'Forbidden: Provided credentials are erroneous'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples:
+                Bad Email:
+                  value:
+                    code: auth.bad-email
+                    messsage: ...
+                Bad Password:
+                  value:
+                    code: auth.bad-password
+                    messsage: ...
+        '422':
+          description: 'Unprocessable Entity: The request does not match the prerequists'
+      description: Logins the user using its credentials (email and password).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+  /register:
+    post:
+      summary: ''
+      operationId: post-register
+      responses:
+        '200':
+          description: OK
+      description: 'Register the creation of a user, generate a signup token, and send an email to the user with a link to create its password.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: integer
+  /two-fa-validation:
+    post:
+      summary: ''
+      operationId: post-two-fa-validation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Updated user Authentication JWT
+                required:
+                  - token
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples:
+                Bad two-factor token:
+                  value:
+                    code: auth.bad-2fa-token
+                    message: ...
+  /recovery/check-token:
+    get:
+      summary: Validate recovery token
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the user associated with the given token
+                required:
+                  - name
+              examples: {}
+        '400':
+          description: 'Bad Request: The given recovery token is invalid'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples: {}
+      operationId: validate-recovery-token
+      description: Validate the given recovery token is valid and can effectively be used to reset the userr password. Calling this route does not consume the token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Recovery token
+              required:
+                - token
+    parameters: []
+  /recovery/lost-password:
+    post:
+      summary: ''
+      operationId: post-recovery-lost-password
+      responses:
+        '200':
+          description: 'OK: On success an empty response is returned. The recovery link with the token is sent directly to the user email.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples:
+                Unknown email:
+                  value:
+                    code: recovery.unknown-email
+                    message: ...
+        '401':
+          description: 'Unauthorized: User cannot ask for recovery. User is probably a group or locked.'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples:
+                Unauthorized:
+                  value:
+                    code: recovery.unauthorized
+                    message: ...
+  /recovery/reset-password:
+    post:
+      summary: ''
+      operationId: post-recovery-reset-password
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Error.v1.yaml
+              examples:
+                Bad Token:
+                  value:
+                    code: recovery.bad-token
+                    message: ...
+  /welcome:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: get-password
+    parameters: []
+    post:
+      summary: ''
+      operationId: post-welcome
+      responses:
+        '200':
+          description: OK
+  /terms-of-service:
+    get:
+      summary: Terms of Service URL
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+      operationId: get-terms-of-service
+      description: Give the URL of the terms of Service PDF
+      security:
+        - 'Bearer <JWT>': []
+    post:
+      summary: Accept Terms of service
+      operationId: post-terms-of-service
+      responses:
+        '200':
+          description: OK
+        '422':
+          description: Bad request format
+      description: Tell the API the user is accepting the terms of service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accept:
+                  type: boolean
+              required:
+                - accept
+      security:
+        - 'Bearer <JWT>': []
+components:
+  schemas: {}
+  securitySchemes:
+    'Bearer <JWT>':
+      type: http
+      scheme: oauth
+      description: User authentication through JWT in the Authorization Header

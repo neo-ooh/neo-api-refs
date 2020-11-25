@@ -1,0 +1,98 @@
+title: Actor
+type: object
+description: |-
+  An actor represent either a User or a Group in the ecosystem.
+
+  Actors are organised in a unique Hierarchical Tree containing all of them.
+  An Actor has a parent and zero or multiple children.
+
+  In term of visibility, an Actor is only aware of the existence of its descendants (its children, and their own, recursively), of subtree shared with it, and of its direct parent. A user doesn't has access by default to any Actor above it in the Tree.
+  The only possible way for short-circuiting this hierarchy if through sharing. An actor being able to share the access to its descendants with another.
+
+  In this model, *required* fields are garanteed to be present when an Actor record is present. Other fields presence depends on the context and will be explicitely specified.
+properties:
+  id:
+    type: integer
+    format: int64
+    description: Unique Identifier of the Actor. This ID is assured to be unique accross all actors in the environment.
+    exclusiveMinimum: false
+    minimum: 1
+  name:
+    type: string
+    minLength: 3
+    description: 'Name of the Actor. For a user, this should be the name of the physical user, for a group, its the name of the group.'
+  email:
+    type:
+      - string
+      - 'null'
+    format: email
+    description: 'Email used by a physical user to log in. If the Actor is a group, no email would be set. Giving an email to a group is UB.'
+  is_group:
+    type: boolean
+    description: Tell if the Actor is a group. This property can only be set on creation.
+  is_locked:
+    type: boolean
+    description: Tell if the user has been locked. A locked user cannot log in. Setting this to `true` on a group is UB.
+  locked_by:
+    type:
+      - integer
+      - 'null'
+    description: 'When an actor is locked, this will hold the ID of the actor who locked it. '
+    format: int64
+  tos_accepted:
+    type: boolean
+    description: 'Tell if the user has accepted the latest version of the Terms of Service. A user who has not, will is required to accept them before doing any action.'
+  last_login_at:
+    type: string
+    format: date-time
+    description: Timestamp of the last time thios actor has validated a login process.
+  created_at:
+    type: string
+    format: date-time
+    description: Timestamp of the creation of this actor.
+  updated_at:
+    type: string
+    format: date-time
+    description: |-
+      Timestamp of the list time this actor
+      has been updated.
+  parent_id:
+    type:
+      - integer
+      - 'null'
+    format: int64
+    description: 'ID of the parent actor. If the current actor is the root actor, this value will be set to null. This is something that cannot be ignore and need to be taken into account in order to prevent errors.'
+  parent_is_group:
+    type: boolean
+    description: Convenient flag telling if the parent user is a group.
+  direct_children_count:
+    type: integer
+    format: int64
+    minimum: 0
+    description: Tell how many Actors have this Actor as their parent.
+  path_ids:
+    type: string
+    format: uri
+    example: 5/6/8
+    description: 'Slash separated list of groups ids between the current Actor and the root of the tree, ordered by depth. If the current Actor has no groups in-between it and the root, this field will hold an empty string.'
+  path_names:
+    type: string
+    format: uri
+    example: group-a/group-b
+    description: 'Slash-separated list of the names of the groups between the current Actor and the root of the tree, ordered from closer to the root to farther from the root. If the current Actor has no groups in-between it and the root, this field will hold an empty string.'
+required:
+  - id
+  - name
+  - email
+  - is_group
+  - is_locked
+  - locked_by
+  - tos_accepted
+  - last_login_at
+  - created_at
+  - updated_at
+  - parent_id
+  - parent_is_group
+  - direct_children_count
+  - path_ids
+  - path_names

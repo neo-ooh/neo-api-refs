@@ -1,20 +1,25 @@
 openapi: 3.0.0
 info:
-  title: Users-Manager
+  title: Users API
   version: '1.0'
   contact:
     name: Valentin Dufois
     email: vdufois@neo-ooh.com
-  description: 'The Users Manager API handles all operations related to the users, their capabilities and more. Information inside this API are central to all Neo services  '
+  description: |-
+    The Users Manager API handles all operations related to the users, their capabilities and more. Information inside this API are central to all Neo services.
+
+    As of all other APIs in this ecosystem, unless specified otherwise, each route may return a `401` if a valid authentication is not provided, or a `403` if the requesting user doesn't have the necessary capability.
 servers:
   - url: 'https://api.users.neo-ooh.info/v1'
-    description: prod
+    description: production
   - url: 'https://dev.api.users.neo-ooh.info/v1'
-    description: dev
+    description: development
+  - url: 'https://neo-users.test/v1'
+    description: local
 paths:
   /users:
     get:
-      summary: 'List all users the current user can see '
+      summary: List Actors accessible by the current user.
       responses:
         '200':
           description: OK
@@ -24,32 +29,55 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ../models/User.v1.yaml
-        '401':
-          description: Unauthorized
-        '409':
-          description: 'Conflict: A user with the same email is already registered.'
-      operationId: get-all-users
-      description: Returns all the users. The returned list depends on who is logged in what users it can access.
-      tags:
-        - users
+                  $ref: ../models/Actor.v1.yaml
+      operationId: users.index
+      description: |-
+        **Required Capability:** None
+
+        List all Actors accessible by the current User. Groups are not included in the response by default.
+        This list can be personalized using query parameters.
+      parameters:
+        - schema:
+            type: array
+            uniqueItems: true
+          in: query
+          name: exclude
+          description: IDs of actors to exclude from the response
+          style: form
+          explode: true
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: groups
+          description: Include groups in the response.
+          allowEmptyValue: true
+        - schema:
+            type: boolean
+            default: 'false'
+          in: query
+          name: withself
+          description: Specifying this flag will force-include the current user in the results.
     post:
-      summary: Create a new user
+      summary: Create a new Actor
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: ../models/User.v1.yaml
+                $ref: ../models/Actor.v1.yaml
         '400':
           description: Bad Request
         '401':
           description: Unauthorized
         '409':
           description: 'Conflict: Provided user email is already used'
-      operationId: create-new-user
-      description: Creates a new user
+      operationId: users.store
+      description: |-
+        **Required Capability:** users.edit
+
+        Creates a new Actor. 
       requestBody:
         content:
           application/json:
@@ -101,7 +129,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../models/User.v1.yaml
+                $ref: ../models/Actor.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-users
@@ -119,7 +147,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../models/User.v1.yaml
+                $ref: ../models/Actor.v1.yaml
         '401':
           description: Unauthorized
         '409':
@@ -169,7 +197,7 @@ paths:
         required: true
         description: A user ID
     get:
-      summary: "Get a user's capabilities"
+      summary: Get a user's capabilities
       tags:
         - capabilities
         - users
@@ -206,7 +234,7 @@ paths:
           description: 'If set, the capabilities are returned flattened, without any role information'
           allowEmptyValue: true
     put:
-      summary: "Update a user's capabilities"
+      summary: Update a user's capabilities
       operationId: update-user-capabilities
       responses:
         '200':
@@ -245,7 +273,7 @@ paths:
         in: path
         required: true
     get:
-      summary: "List a user's activity history"
+      summary: List a user's activity history
       responses:
         '200':
           description: OK
@@ -300,7 +328,7 @@ paths:
         '401':
           description: Unauthorized
       operationId: post-user-activity
-      description: "Register an activity to the user's history"
+      description: Register an activity to the user's history
       requestBody:
         content:
           application/json:
@@ -440,7 +468,7 @@ paths:
                 standalone:
                   type: boolean
         description: Include properties of the capability you want to update
-      description: "Updates the capability's default value and its standalone property"
+      description: Updates the capability's default value and its standalone property
       tags:
         - capabilities
   /roles:
@@ -509,7 +537,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: ../models/Group.v1.yaml
+                  $ref: ../models/Actor.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-groups
@@ -524,7 +552,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ../models/Group.v1.yaml
+                $ref: ../models/Actor.v1.yaml
         '401':
           description: Unauthorized
       operationId: post-groups
@@ -577,7 +605,7 @@ paths:
                       - string
                       - array
                     items:
-                      $ref: ../models/User.v1.yaml
+                      $ref: ../models/Actor.v1.yaml
         '401':
           description: Unauthorized
       operationId: get-group
@@ -852,7 +880,7 @@ paths:
                 $ref: ../models/Role.v1.yaml
         '401':
           description: Unauthorized
-      description: "Update the role's name and description."
+      description: Update the role's name and description.
       requestBody:
         content:
           application/json:
@@ -1164,7 +1192,7 @@ paths:
         in: path
         required: true
     get:
-      summary: "Get user's locations"
+      summary: Get user's locations
       tags:
         - user
         - location
@@ -1243,10 +1271,10 @@ components:
       x-tags:
         - activities
   securitySchemes:
-    neo-auth-sso-token:
+    Authorization:
       type: http
       scheme: bearer
-      description: API Token given by the Neo Auth API
+      description: ''
 tags:
   - name: users
   - name: capabilities
