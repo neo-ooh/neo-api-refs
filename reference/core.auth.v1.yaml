@@ -1,0 +1,346 @@
+openapi: 3.0.0
+info:
+  title: core.auth
+  version: '1.0'
+  description: |-
+    This module handles authentication related functionalities of Connect such as
+    - Login
+    - Second-Factor auth
+    - User registration with invite links
+    - Password recovery
+
+    A bit of logic regarding authentication on the Connect API.
+
+    Users authenticate themselves through the use of an Authorization token. For these token to be generated and valid, the user needs to 
+    - Provide its crendentials (email + password), 
+    - Pass the two-factor authentication challenge (6-digits code, sent automatically after completing the preivous step),
+    - And accept the Terms of services. 
+
+    Without all of these requirements fullfilled, requests to any other Connect endpoint will get rejected.
+  contact:
+    name: Valentin Dufois
+    email: vdufois@neo-ooh.com
+servers:
+  - url: 'https://api.neo-ooh.info/v1/auth'
+    description: production
+  - url: 'https://dev.api.neo-ooh.info/v1/auth'
+    description: development
+paths:
+  /welcome:
+    get:
+      summary: Validate welcome token
+      tags: []
+      responses:
+        '200':
+          description: |-
+            The token is valid, and can be used to register the user.
+            The user name is included in the response body for display purpose.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Name of the user associated with the token
+        '400':
+          description: The given token is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: ../error.yaml
+      operationId: core.auth.welcome.check
+      description: This endpoint validates the given sign-up token.
+      parameters:
+        - schema:
+            type: string
+            minLength: 32
+            maxLength: 32
+          in: query
+          name: token
+          required: true
+          description: A signup token
+    parameters: []
+    post:
+      summary: ''
+      operationId: core.auth.welcome.register
+      responses:
+        '200':
+          description: OK
+      description: |-
+        This endpoint is used to store a user password using a welcome token.
+        This action consumes the token, making it unusable.
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  minLength: 32
+                  maxLength: 32
+                  description: A valid signup token to authorize the request
+                password:
+                  type: string
+                  description: The password to give to the user Id'd by the token
+                  minLength: 6
+                password_confirm:
+                  type: string
+                  minLength: 6
+                  description: Password confirmation
+              required:
+                - token
+                - password
+                - password_confirm
+  /login:
+    post:
+      summary: ''
+      operationId: login
+      responses:
+        '200':
+          description: 'OK: Login successful. User still need to pass the second factor auth to get access to services.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Token for the user to ID future requests
+                  tos_accepted:
+                    type: boolean
+                    description: Tell if the user has accepted the terms of service.
+        '403':
+          description: 'Forbidden: Provided credentials are erroneous'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+              examples:
+                Bad Email: {}
+        '422':
+          description: 'Unprocessable Entity: The request does not match the prerequists'
+      description: Logs the user using its credentials (email and password).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+              required:
+                - email
+                - password
+  /two-fa-validation:
+    post:
+      summary: ''
+      operationId: core.auth.two-fa-validate
+      responses:
+        '200':
+          description: OK
+      description: Validates two-factor authentication for a user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  minLength: 6
+                  maxLength: 6
+                  description: Siz numbers 2FA token
+      security:
+        - Authorization: []
+  /token-refresh:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: ''
+                required:
+                  - token
+      operationId: core.auth.token-refresh
+      security:
+        - Authorization: []
+      description: Provides a new token to ID the user for future requests.
+  /recovery/check-token:
+    parameters: []
+    post:
+      summary: ''
+      operationId: core.auth.recovery.check-token
+      responses:
+        '200':
+          description: Token is valid and can be used.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Name of the associated user
+        '400':
+          description: Invalid token
+          content:
+            application/json:
+              schema:
+                $ref: ../error.yaml
+      description: |-
+        Validates a password-recovery token validity.
+        Returnes the associated user name on success for display purpose.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          description: Recovery token
+  /recovery/recover-password:
+    post:
+      summary: Password recovery
+      operationId: core.auth.recovery.recover-password
+      responses:
+        '200':
+          description: Email sent.
+        '400':
+          description: Unknown email
+          content:
+            application/json:
+              schema:
+                $ref: ../error.yaml
+        '401':
+          description: User is not authorized to access the platform.
+          content:
+            application/json:
+              schema:
+                $ref: ../error.yaml
+        '':
+          description: ''
+      description: Send a password recovery email with a recovery link
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+              required:
+                - email
+    parameters: []
+  /recovery/reset-password:
+    post:
+      summary: ''
+      operationId: core.auth.recovery.reset-password
+      responses:
+        '200':
+          description: Password changed.
+        '400':
+          description: Bad token
+          content:
+            application/json:
+              schema:
+                $ref: ../error.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Recovery token
+                  minLength: 32
+                  maxLength: 32
+                password:
+                  type: string
+                  description: New password
+                  format: password
+                password_confirm:
+                  type: string
+                  description: New password confirmation
+                  format: password
+              required:
+                - token
+                - password
+                - password_confirm
+      description: Use a recovery token to update the associated user password.
+  /terms-of-service:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: URL to the Terms of service file
+                  updated:
+                    type: string
+                    format: date-time
+                    description: Date time of the last update
+      operationId: core.auth.terms-of-service.get
+      description: Provide a link to the terms of service
+      security:
+        - Authorization: []
+    post:
+      summary: ''
+      operationId: core.auth.terms-of-service.accept
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: Updated `Authorization` token for the current user
+      description: 'Tell the user accept (or not) the terms of service, and provide an updated Authorization token in return.'
+      security:
+        - Authorization: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accept:
+                  type: boolean
+              required:
+                - accept
+components:
+  schemas: {}
+  securitySchemes:
+    Authorization:
+      type: http
+      scheme: bearer

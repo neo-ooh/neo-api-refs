@@ -1,0 +1,10 @@
+title: Error
+type: object
+description: This error model defines the shape taken by error returned by the API.
+properties:
+  code:
+    type: string
+    description: Dot-delimited identifier for the error
+  message:
+    type: string
+    description: Human readable description of the error
